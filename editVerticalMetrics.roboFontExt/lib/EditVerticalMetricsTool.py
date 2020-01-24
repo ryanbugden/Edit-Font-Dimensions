@@ -7,6 +7,14 @@ toolbarIcon = NSImage.alloc().initByReferencingFile_(path.join(dirname, "../reso
 
 class EditVertMetrics(EditingTool):
     
+    '''
+    Robofont extension for quickly manipulating 
+    your font’s vertical metrics.
+    
+    Ryan Bugden
+    2020.01.24
+    '''
+    
     def setup(self):
         self.f = CurrentFont()
         
@@ -30,7 +38,13 @@ class EditVertMetrics(EditingTool):
             if guideline.name in self.verts.keys():
                 self.f.removeGuideline(guideline)
         
-    def mouseUp(self, notification):
+    def mouseDragged(self, point, delta):
+        self.setMetrics()
+                
+    def mouseUp(self, point):
+        self.setMetrics()
+                
+    def setMetrics(self):
         self.f = CurrentFont()
         
         vert_settings = {}
@@ -43,6 +57,5 @@ class EditVertMetrics(EditingTool):
         
     def getToolbarIcon(self):
         return(toolbarIcon)
-        
         
 installTool(EditVertMetrics())

@@ -5,7 +5,7 @@ Robofont extension for quickly manipulating your font’s vertical metrics. Usef
 ## Instructions:
 * Install extension once.
 * Click toolbar icon.
-* Move vertical metrics. Should update on mouse-up.
+* Move vertical metrics. (temporarily selectable as guidelines)
 * Exit tool and continue on with your life.
 
 <br />

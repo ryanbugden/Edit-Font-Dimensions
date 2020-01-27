@@ -3,13 +3,13 @@ from AppKit import NSImage
 from os import path
 
 dirname = path.dirname(__file__)
-toolbarIcon = NSImage.alloc().initByReferencingFile_(path.join(dirname, "../resources/EditVerticalMetricsTool_Icon.pdf"))
+toolbarIcon = NSImage.alloc().initByReferencingFile_(path.join(dirname, "../resources/EditFontDimensionsTool_Icon.pdf"))
 
-class EditVertMetrics(EditingTool):
+class EditFontDimensions(EditingTool):
     
     '''
-    Robofont extension for quickly manipulating 
-    your font’s vertical metrics.
+    Robofont extension for visually manipulating 
+    your font info’s Dimensions values.
     
     Ryan Bugden
     2020.01.24
@@ -53,9 +53,9 @@ class EditVertMetrics(EditingTool):
                 setattr(self.f.info, self.verts[guideline.name][1], guideline.y) 
             
     def getToolbarTip(self):
-        return "Edit Vertical Metrics"
+        return "Edit Font Dimensions"
         
     def getToolbarIcon(self):
         return(toolbarIcon)
         
-installTool(EditVertMetrics())
+installTool(EditFontDimensions())

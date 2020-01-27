@@ -1,15 +1,15 @@
-# Edit Vertical Metrics
+# Edit Font Dimensions
 
-Robofont extension for quickly manipulating your font’s vertical metrics. Useful for early-stages design.
+Robofont extension for quickly manipulating your font info’s “Dimensions” values.
 
 ## Instructions:
 * Install extension once.
 * Click toolbar icon.
-* Move vertical metrics. (temporarily selectable as guidelines)
+* Move font dimension values. (temporarily selectable as guidelines)
 * Exit tool and continue on with your life.
 
 <br />
 
-![](./_images/editVert_demo.gif)
+![](./_images/editFontDimensions_demo.gif)
 
 

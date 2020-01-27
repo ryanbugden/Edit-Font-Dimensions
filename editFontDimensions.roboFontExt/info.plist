@@ -13,9 +13,9 @@
 	<key>launchAtStartUp</key>
 	<integer>1</integer>
 	<key>mainScript</key>
-	<string>EditVerticalMetricsTool.py</string>
+	<string>EditFontDimensionsTool.py</string>
 	<key>name</key>
-	<string>Edit Vertical Metrics</string>
+	<string>Edit Font Dimensions</string>
 	<key>requiresVersionMajor</key>
 	<string>3</string>
 	<key>requiresVersionMinor</key>
@@ -23,6 +23,6 @@
 	<key>timeStamp</key>
 	<real>1579889051.8066711</real>
 	<key>version</key>
-	<string>1.0.4</string>
+	<string>1.1.0</string>
 </dict>
 </plist>

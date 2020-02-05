@@ -1,4 +1,5 @@
 from mojo.events import EditingTool, installTool
+from mojo.UI import getDefault, setDefault
 from AppKit import NSImage
 from os import path
 
@@ -30,6 +31,9 @@ class EditFontDimensions(EditingTool):
         
         for vert in self.verts.keys():
             self.f.appendGuideline(position=(0, self.verts[vert][0]), angle=0, name=vert, color=(0,0,0,1))
+            
+        self.user_lock = getDefault("glyphViewLockGuides")
+        setDefault("glyphViewLockGuides", False)
 
     def becomeInactive(self):
         self.f = CurrentFont()
@@ -37,6 +41,8 @@ class EditFontDimensions(EditingTool):
         for guideline in self.f.guidelines:
             if guideline.name in self.verts.keys():
                 self.f.removeGuideline(guideline)
+                
+        setDefault("glyphViewLockGuides", self.user_lock)
         
     def mouseDragged(self, point, delta):
         self.setMetrics()

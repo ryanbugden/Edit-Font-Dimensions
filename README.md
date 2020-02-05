@@ -16,5 +16,5 @@ Robofont extension for quickly manipulating your font info’s “Dimensions” 
 
 ```
 1.1.1 2020-02-05  Fix need to unlock guides when using tool (if guides were locked). Thanks for the note, CJ Dunn!
-1.0.0 2020-01-24  Initial
+1.0.0 2020-01-24  Initial release
 ```

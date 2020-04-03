@@ -11,7 +11,7 @@ Robofont extension for quickly manipulating your font info’s “Dimensions” 
 
 <br />
 
-![](./_images/editFontDimensions_demo.gif)
+![](./_images/editFontDimensions_demo_2.gif)
 
 
 ## To do:

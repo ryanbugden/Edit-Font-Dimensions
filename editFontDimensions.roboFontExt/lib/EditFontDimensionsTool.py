@@ -1,6 +1,6 @@
 from mojo.events import EditingTool, installTool
 from mojo.UI import getDefault, setDefault, CurrentGlyphWindow
-# from mojo.extensions import setExtensionDefault, getExtensionDefault, registerExtensionDefaults, removeExtensionDefault
+from mojo.extensions import setExtensionDefault, getExtensionDefault
 from AppKit import NSImage
 from vanilla import CheckBox
 from os import path
@@ -9,12 +9,12 @@ dirname = path.dirname(__file__)
 toolbarIcon = NSImage.alloc().initByReferencingFile_(path.join(dirname, "../resources/EditFontDimensionsTool_Icon.pdf"))
 
 class EditFontDimensions(EditingTool):
-    
     '''
     Robofont extension for visually manipulating 
     your font info’s Dimensions values.
     
     Ryan Bugden
+    1.2.1 2020.04.03
     1.2.0 2020.04.03
     1.1.1 2020.02.05
     1.0.0 2020.01.24 
@@ -26,13 +26,15 @@ class EditFontDimensions(EditingTool):
     def becomeActive(self):
         self.f = CurrentFont()
         self.w = CurrentGlyphWindow()
-        
         self.desc_driving = False
         
+        # setting up user preferences
+        self.pref_key = 'com.ryanbugden.EditFontDimensions'
+        
         # adding the UPM lock checkbox
-        self.lock2upm = False
+        self.lock2upm = getExtensionDefault(self.pref_key, False)
         self.checkbox = CheckBox(
-            (-200,40,200,30), 
+            (-210,40,200,30), 
             "Lock Asc/Desc to UPM", 
             callback=self.setUPMLock, 
             value=self.lock2upm, 
@@ -40,7 +42,7 @@ class EditFontDimensions(EditingTool):
             )
         self.w.addGlyphEditorSubview(self.checkbox)
         
-        # setting up guides and invisible names...
+        # setting up guides and invisible names... should probably use identifiers
         self.verts = {
             "             "  : [self.f.info.descender, "descender"],
             "            "   : [self.f.info.xHeight,   "xHeight"],
@@ -61,6 +63,8 @@ class EditFontDimensions(EditingTool):
         else:
             self.lock2upm = True
             self.setMetrics()
+        
+        setExtensionDefault(self.pref_key, self.lock2upm)
 
     def becomeInactive(self):
         self.f = CurrentFont()

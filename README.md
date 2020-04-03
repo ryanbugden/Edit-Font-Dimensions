@@ -22,6 +22,6 @@ Robofont extension for quickly manipulating your font info’s “Dimensions” 
 ```
 1.2.1 2020.04.03  User default on the toggle is stored now. Thanks for the tip, Connor.
 1.2.0 2020.04.03  Supporting locking asc-desc relationship to UPM. Thanks for the suggestion, Dyana Weissman!
-1.1.1 2020-02-05  Fix need to unlock guides when using tool (if guides were locked). Thanks for the note, CJ Dunn!
-1.0.0 2020-01-24  Initial release
+1.1.1 2020.02.05  Fix need to unlock guides when using tool (if guides were locked). Thanks for the note, CJ Dunn!
+1.0.0 2020.01.24  Initial release
 ```

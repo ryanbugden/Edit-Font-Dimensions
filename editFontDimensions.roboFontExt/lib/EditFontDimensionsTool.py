@@ -1,4 +1,4 @@
-from mojo.events import EditingTool, installTool
+from mojo.events import EditingTool, installTool, addObserver, removeObserver
 from mojo.UI import getDefault, setDefault, CurrentGlyphWindow
 from mojo.extensions import setExtensionDefault, getExtensionDefault
 from AppKit import NSImage
@@ -14,6 +14,7 @@ class EditFontDimensions(EditingTool):
     your font info’s Dimensions values.
     
     Ryan Bugden
+    1.2.2 2020.04.03
     1.2.1 2020.04.03
     1.2.0 2020.04.03
     1.1.1 2020.02.05
@@ -56,6 +57,8 @@ class EditFontDimensions(EditingTool):
         # saving whether user has guides locked previously
         self.user_lock = getDefault("glyphViewLockGuides")
         setDefault("glyphViewLockGuides", False)
+        
+        addObserver(self, "close", "fontWillClose")
     
     def setUPMLock(self, sender):
         if sender.get() == 0:
@@ -68,14 +71,22 @@ class EditFontDimensions(EditingTool):
 
     def becomeInactive(self):
         self.f = CurrentFont()
+        self.cleanUp(self.f)
         
-        for guideline in self.f.guidelines:
+    def close(self, notification):
+        self.cleanUp(notification['font'])
+        
+    def cleanUp(self, font):
+        
+        for guideline in font.guidelines:
             if guideline.name in self.verts.keys():
-                self.f.removeGuideline(guideline)
+                font.removeGuideline(guideline)
                 
         setDefault("glyphViewLockGuides", self.user_lock)
         
         self.w.removeGlyphEditorSubview(self.checkbox)
+        
+        removeObserver(self, "fontWillClose")
         
     def mouseDown(self, point, clickCount):
         if abs(point.y - self.f.info.descender) < abs(self.f.info.ascender - point.y):

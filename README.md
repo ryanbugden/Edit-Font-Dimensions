@@ -1,6 +1,6 @@
 # Edit Font Dimensions
 
-Robofont extension for quickly manipulating your font info’s “Dimensions” values.
+A RoboFont extension for quickly manipulating your font info’s “Dimensions” values.
 
 ## Instructions:
 * Install extension once.
@@ -20,6 +20,7 @@ Robofont extension for quickly manipulating your font info’s “Dimensions” 
 ### Versions
 
 ```
+1.2.3 2023.05.31  Slightly better performance, code clean-up.
 1.2.2 2020.04.03  Fix bug that left guidelines there if the font was closed while the extension was active. Issue #3
 1.2.1 2020.04.03  User default on the toggle is stored now. Thanks for the tip, Connor. Issue #2
 1.2.0 2020.04.03  Supporting locking asc-desc relationship to UPM. Thanks for the suggestion, Dyana Weissman!

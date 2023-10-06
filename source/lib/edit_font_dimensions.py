@@ -54,7 +54,7 @@ class EditFontDimensions(EditingTool):
         for f in AllFonts():
             font_guides = {}
             for attribute in self.dimensions:
-                new_guide = f.appendGuideline(position=(0, getattr(self.f.info, attribute)), angle=0, name=EMPTY_NAME, color=guide_color)
+                new_guide = f.appendGuideline(position=(0, getattr(f.info, attribute)), angle=0, name=EMPTY_NAME, color=guide_color)
                 font_guides[attribute] = new_guide
             self.all_fonts_guides[f] = font_guides
         

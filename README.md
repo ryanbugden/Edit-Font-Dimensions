@@ -15,11 +15,8 @@ Edit Font Dimensions is a RoboFont extension that allows you to change your Font
 
 <br />
 
-![](./_images/demo.gif)
+![](./images/demo.gif)
 
-
-## To do:
-* Support locking not just asc-desc, but max y and min y, perhaps.
 
 ### Versions
 

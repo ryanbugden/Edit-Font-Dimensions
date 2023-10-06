@@ -15,7 +15,8 @@ Edit Font Dimensions is a RoboFont extension that allows you to change your Font
 
 <br />
 
-![](./images/demo.gif)
+
+<img src="./images/demo.gif">
 
 
 ### Versions

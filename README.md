@@ -2,12 +2,14 @@
 
 A RoboFont extension for manipulating your Font Dimensions directly in Glyph Editor.
 
-## Instructions:
-* Install extension.
-* Click toolbar icon.
-* Decide whether you want to lock the ascender / descender relationship to the UPM or not. If you change the descender and then toggle the check box on, the ascender will snap to the UPM—and vice versa. (this feature idea thanks to Dyana Weissman)
-* Move font dimension values. (temporarily selectable as guidelines)
-* Exit tool.
+## How to use:
+1. Install extension.
+2. Click toolbar icon.
+3. Decide whether you keep the ascender-to-descender distance the same as UPM. 
+> Note: If you change the descender and _then_ toggle the check box on, the ascender will snap to the UPM—and vice versa. (Thanks to Dyana Weissman for the feature idea!)
+
+4. Move font dimension values. (draggable as guidelines)
+5. Exit tool.
 
 <br />
 

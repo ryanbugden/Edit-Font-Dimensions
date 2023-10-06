@@ -25,49 +25,30 @@ class EditFontDimensions(EditingTool):
         self.f = CurrentFont()
         self.last_snap_driving = "descender"
 
-        self.pre_clean()
+        # Pre-clean guides
+        identifiers = getExtensionDefault(EXTENSION_KEY + ".identifiers", [])
+        for f in AllFonts():
+            for guideline in f.guidelines:
+                if guideline.identifier in identifiers:
+                    f.removeGuideline(guideline)
+                    identifiers.remove(guideline.identifier)
+        setExtensionDefault(EXTENSION_KEY + ".identifiers", identifiers)
     
         # Adding the UPM lock checkbox
         self.snap_to_upm = getExtensionDefault(EXTENSION_KEY, False)
-        
-        self.checkboxes = []
-        for w in AllGlyphWindows():
-            checkbox_width = 190
-            checkbox_height = 50
-            padding = 8
-            checkbox = CheckBox(
-                (-checkbox_width - padding, padding, -padding, checkbox_height), 
-                "Snap Asc–Desc to UPM", 
-                callback   = self.checkbox_callback, 
-                value      = self.snap_to_upm, 
-                sizeStyle  = 'regular'
-                )
-            w.addGlyphEditorSubview(checkbox)
-            self.checkboxes.append((w, checkbox))
+        self.add_checkboxes()
         
         # Setting up heights and guides
         self.update_dimension_info()
-        
-        guide_color = (0,0,0,1)
-        if inDarkMode():
-            guide_color = (1,1,1,1)    
-
-        self.all_fonts_guides = {}
-        identifiers = getExtensionDefault(EXTENSION_KEY + ".identifiers", [])
-        for f in AllFonts():
-            font_guides = {}
-            for attribute in self.dimensions:
-                new_guide = f.appendGuideline(position=(0, getattr(f.info, attribute)), angle=0, name=None, color=guide_color)
-                font_guides[attribute] = new_guide
-                identifiers.append(new_guide.identifier)
-            self.all_fonts_guides[f] = font_guides
-        setExtensionDefault(EXTENSION_KEY + ".identifiers", identifiers)
+        self.set_up_guides()
         
         # Saving whether user has guides locked previously
         self.user_lock = getDefault("glyphViewLockGuides")
         setDefault("glyphViewLockGuides", False)
         
-        addObserver(self, "close", "fontWillClose")
+        addObserver(self, "font_will_close", "fontWillClose")
+        addObserver(self, "font_did_open", "fontDidOpen")
+        addObserver(self, "glyph_window_did_open", "glyphWindowDidOpen")
     
 
     def checkbox_callback(self, sender):
@@ -87,6 +68,22 @@ class EditFontDimensions(EditingTool):
         self.dim_values_and_names = {}
         for attribute in self.dimensions:
             self.dim_values_and_names[getattr(self.f.info, attribute)] = attribute
+
+
+    def set_up_guides(self):
+        guide_color = (0,0,0,1)
+        if inDarkMode():
+            guide_color = (1,1,1,1)    
+        self.all_fonts_guides = {}
+        identifiers = getExtensionDefault(EXTENSION_KEY + ".identifiers", [])
+        for f in AllFonts():
+            font_guides = {}
+            for attribute in self.dimensions:
+                new_guide = f.appendGuideline(position=(0, getattr(f.info, attribute)), angle=0, name=None, color=guide_color)
+                font_guides[attribute] = new_guide
+                identifiers.append(new_guide.identifier)
+            self.all_fonts_guides[f] = font_guides
+        setExtensionDefault(EXTENSION_KEY + ".identifiers", identifiers)
 
 
     def set_metrics(self):
@@ -110,36 +107,65 @@ class EditFontDimensions(EditingTool):
                 desc_from_asc = self.f.info.ascender - self.f.info.unitsPerEm
                 guideline.y = desc_from_asc
                 self.f.info.descender = desc_from_asc
-                
-                
-    def pre_clean(self):
-        identifiers = getExtensionDefault(EXTENSION_KEY + ".identifiers", [])
-        for f in AllFonts():
-            for guideline in f.guidelines:
-                if guideline.identifier in identifiers:
-                    f.removeGuideline(guideline)
-                    identifiers.remove(guideline.identifier)
-        setExtensionDefault(EXTENSION_KEY + ".identifiers", identifiers)
 
 
-    def post_clean(self):
+    def remove_all_guides(self):
         for f, font_guides in self.all_fonts_guides.items():
             for guideline in font_guides.values():
-                guideline.font.removeGuideline(guideline)
-        # Restore user’s preference for whether guidelines are locked.
-        setDefault("glyphViewLockGuides", self.user_lock)
-        for w, checkbox in self.checkboxes:
-            w.removeGlyphEditorSubview(checkbox)
-        self.checkboxes = []
-        removeObserver(self, "fontWillClose")
+                if f:
+                    f.removeGuideline(guideline)
 
 
     def becomeInactive(self):
-        self.post_clean()
+        self.remove_all_guides()
+        removeObserver(self, "fontWillClose")
+        removeObserver(self, "fontWillOpen")
+        # Restore user’s preference for whether guidelines are locked.
+        setDefault("glyphViewLockGuides", self.user_lock)
+        self.remove_checkboxes()
+
+
+    def add_checkboxes(self):
+        self.checkboxes = []
+        for w in AllGlyphWindows():
+            checkbox_width = 190
+            checkbox_height = 50
+            padding = 8
+            checkbox = CheckBox(
+                (-checkbox_width - padding, padding, -padding, checkbox_height), 
+                "Snap Asc–Desc to UPM", 
+                callback   = self.checkbox_callback, 
+                value      = self.snap_to_upm, 
+                sizeStyle  = 'regular'
+                )
+            w.addGlyphEditorSubview(checkbox)
+            self.checkboxes.append((w, checkbox))
+
+
+    def remove_checkboxes(self):
+        for w, checkbox in self.checkboxes:
+            w.removeGlyphEditorSubview(checkbox)
+        self.checkboxes = []
         
 
-    def close(self, notification):
-        self.post_clean()
+    def font_will_close(self, notification):
+        f = notification['font']
+        if f in self.all_fonts_guides.keys():
+            self.all_fonts_guides.pop(f)
+        self.remove_all_guides()
+        self.set_up_guides()
+
+
+    def font_did_open(self, font):
+        self.remove_all_guides()
+        self.set_up_guides()
+
+
+    def glyph_window_did_open(self, window):
+        self.remove_all_guides()
+        self.set_up_guides()
+        self.remove_checkboxes()
+        self.add_checkboxes()
         
 
     def mouseDown(self, point, clickCount):

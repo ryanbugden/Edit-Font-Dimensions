@@ -23,6 +23,7 @@ class EditFontDimensions(EditingTool):
 
     def becomeActive(self):
         self.f = CurrentFont()
+        self.last_snap_driving = "descender"
 
         self.pre_clean()
     
@@ -31,8 +32,11 @@ class EditFontDimensions(EditingTool):
         
         self.checkboxes = []
         for w in AllGlyphWindows():
+            checkbox_width = 190
+            checkbox_height = 50
+            padding = 8
             checkbox = CheckBox(
-                (-210,40,200,30), 
+                (-checkbox_width - padding, padding, -padding, checkbox_height), 
                 "Snap Asc–Desc to UPM", 
                 callback   = self.checkbox_callback, 
                 value      = self.snap_to_upm, 
@@ -93,15 +97,15 @@ class EditFontDimensions(EditingTool):
         setattr(self.f.info, self.driving_attr, self.driving_guideline.y)
 
         if self.snap_to_upm:
-            # Change the ascender if the descender is driving, and you’re locking to UPM
-            if self.driving_attr == "descender":
+            # Change the ascender if the descender was the last to drive, and you’re locking to UPM
+            if self.last_snap_driving == "descender":
                 guideline = self.all_fonts_guides[self.f]["ascender"]
                 asc_from_desc = self.f.info.descender + self.f.info.unitsPerEm
                 guideline.y = asc_from_desc
                 self.f.info.ascender = asc_from_desc
 
-            # Change the descender if the ascender is driving, and you’re locking to UPM
-            elif self.driving_attr == "ascender":
+            # Change the descender if the ascender was the last to drive, and you’re locking to UPM
+            elif self.last_snap_driving == "ascender":
                 guideline = self.all_fonts_guides[self.f]["descender"]
                 desc_from_asc = self.f.info.ascender - self.f.info.unitsPerEm
                 guideline.y = desc_from_asc
@@ -143,6 +147,8 @@ class EditFontDimensions(EditingTool):
         # Find the closest dimension to the mouse pointer, and designate a driver (guideline)
         if DEBUG: print("mouse-down")
         self.driving_attr, self.driving_guideline = min(self.all_fonts_guides[self.f].items(), key=lambda x: abs(point.y - x[1].y))
+        if self.driving_attr in ["ascender", "descender"]:
+            self.last_snap_driving = self.driving_attr
         if DEBUG: print(self.driving_attr, self.f, self.driving_guideline in self.f.guidelines)
     
 

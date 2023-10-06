@@ -9,8 +9,6 @@ from os import path
 dirname = path.dirname(__file__)
 TOOLBAR_ICON = NSImage.alloc().initByReferencingFile_(path.join(dirname, "../resources/toolbar_icon.pdf"))
 
-EMPTY_NAME = "                "
-
 EXTENSION_KEY = 'com.ryanbugden.editFontDimensions'
 
 DEBUG = False
@@ -51,12 +49,15 @@ class EditFontDimensions(EditingTool):
             guide_color = (1,1,1,1)    
 
         self.all_fonts_guides = {}
+        identifiers = getExtensionDefault(EXTENSION_KEY + ".identifiers", [])
         for f in AllFonts():
             font_guides = {}
             for attribute in self.dimensions:
-                new_guide = f.appendGuideline(position=(0, getattr(f.info, attribute)), angle=0, name=EMPTY_NAME, color=guide_color)
+                new_guide = f.appendGuideline(position=(0, getattr(f.info, attribute)), angle=0, name=None, color=guide_color)
                 font_guides[attribute] = new_guide
+                identifiers.append(new_guide.identifier)
             self.all_fonts_guides[f] = font_guides
+        setExtensionDefault(EXTENSION_KEY + ".identifiers", identifiers)
         
         # Saving whether user has guides locked previously
         self.user_lock = getDefault("glyphViewLockGuides")
@@ -108,10 +109,13 @@ class EditFontDimensions(EditingTool):
                 
                 
     def pre_clean(self):
+        identifiers = getExtensionDefault(EXTENSION_KEY + ".identifiers", [])
         for f in AllFonts():
             for guideline in f.guidelines:
-                if guideline.name == EMPTY_NAME:
+                if guideline.identifier in identifiers:
                     f.removeGuideline(guideline)
+                    identifiers.remove(guideline.identifier)
+        setExtensionDefault(EXTENSION_KEY + ".identifiers", identifiers)
 
 
     def post_clean(self):

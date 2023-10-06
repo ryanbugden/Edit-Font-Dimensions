@@ -1,6 +1,8 @@
 # Edit Font Dimensions
 
-A RoboFont extension for manipulating your Font Dimensions directly in Glyph Editor.
+<img src="./images/mechanic_icon.png"  width="80">
+
+Edit Font Dimensions is a RoboFont extension that allows you to change your Font Dimensions directly in Glyph Editor.
 
 ## How to use:
 1. Install extension.

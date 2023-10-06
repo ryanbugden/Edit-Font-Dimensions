@@ -13,6 +13,8 @@ EMPTY_NAME = "                "
 
 EXTENSION_KEY = 'com.ryanbugden.editFontDimensions'
 
+DEBUG = False
+
 
 class EditFontDimensions(EditingTool):
     
@@ -48,9 +50,9 @@ class EditFontDimensions(EditingTool):
         for f in AllFonts():
             font_guides = {}
             for attribute in self.dimensions:
-                new_guide = self.f.appendGuideline(position=(0, getattr(self.f.info, attribute)), angle=0, name=EMPTY_NAME, color=(0,0,0,1))
+                new_guide = f.appendGuideline(position=(0, getattr(self.f.info, attribute)), angle=0, name=EMPTY_NAME, color=(0,0,0,1))
                 font_guides[attribute] = new_guide
-        self.all_fonts_guides[self.f] = font_guides
+            self.all_fonts_guides[f] = font_guides
         
         # Saving whether user has guides locked previously
         self.user_lock = getDefault("glyphViewLockGuides")
@@ -102,13 +104,14 @@ class EditFontDimensions(EditingTool):
                 
                 
     def pre_clean(self):
-        for guideline in self.f.guidelines:
-            if guideline.name == EMPTY_NAME:
-                self.f.removeGuideline(guideline)
+        for f in AllFonts():
+            for guideline in f.guidelines:
+                if guideline.name == EMPTY_NAME:
+                    f.removeGuideline(guideline)
 
 
     def post_clean(self):
-        for f, font_guides in AllFonts():
+        for f, font_guides in self.all_fonts_guides.items():
             for guideline in font_guides.values():
                 guideline.font.removeGuideline(guideline)
         # Restore user’s preference for whether guidelines are locked.
@@ -130,9 +133,9 @@ class EditFontDimensions(EditingTool):
     def mouseDown(self, point, clickCount):
         self.update_dimension_info()
         # Find the closest dimension to the mouse pointer, and designate a driver (guideline)
-        print("mouse-down")
+        if DEBUG: print("mouse-down")
         self.driving_attr, self.driving_guideline = min(self.all_fonts_guides[self.f].items(), key=lambda x: abs(point.y - x[1].y))
-        print(self.driving_attr, self.driving_guideline, self.f, self.driving_guideline in self.f.guidelines)
+        if DEBUG: print(self.driving_attr, self.f, self.driving_guideline in self.f.guidelines)
     
 
     def mouseDragged(self, point, delta):

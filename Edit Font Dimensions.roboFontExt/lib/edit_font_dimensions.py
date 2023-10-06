@@ -1,5 +1,5 @@
 from mojo.events import EditingTool, installTool, addObserver, removeObserver
-from mojo.UI import getDefault, setDefault, AllGlyphWindows
+from mojo.UI import getDefault, setDefault, AllGlyphWindows, inDarkMode
 from mojo.extensions import setExtensionDefault, getExtensionDefault
 from AppKit import NSImage
 from vanilla import CheckBox
@@ -45,12 +45,16 @@ class EditFontDimensions(EditingTool):
         
         # Setting up heights and guides
         self.update_dimension_info()
+        
+        guide_color = (0,0,0,1)
+        if inDarkMode():
+            guide_color = (1,1,1,1)    
 
         self.all_fonts_guides = {}
         for f in AllFonts():
             font_guides = {}
             for attribute in self.dimensions:
-                new_guide = f.appendGuideline(position=(0, getattr(self.f.info, attribute)), angle=0, name=EMPTY_NAME, color=(0,0,0,1))
+                new_guide = f.appendGuideline(position=(0, getattr(self.f.info, attribute)), angle=0, name=EMPTY_NAME, color=guide_color)
                 font_guides[attribute] = new_guide
             self.all_fonts_guides[f] = font_guides
         

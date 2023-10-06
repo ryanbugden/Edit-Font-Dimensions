@@ -17,11 +17,11 @@
 	<key>name</key>
 	<string>Edit Font Dimensions</string>
 	<key>requiresVersionMajor</key>
-	<string>3</string>
+	<string>4</string>
 	<key>requiresVersionMinor</key>
-	<string>5</string>
+	<string>4b</string>
 	<key>timeStamp</key>
-	<real>1696571520.8700101</real>
+	<real>1696571723.2929411</real>
 	<key>version</key>
 	<string>2.0</string>
 </dict>

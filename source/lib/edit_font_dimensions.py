@@ -113,7 +113,10 @@ class EditFontDimensions(EditingTool):
         for f, font_guides in self.all_fonts_guides.items():
             for guideline in font_guides.values():
                 if f:
-                    f.removeGuideline(guideline)
+                    try:
+                        f.removeGuideline(guideline)
+                    except:
+                        continue
 
 
     def becomeInactive(self):

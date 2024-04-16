@@ -126,7 +126,9 @@ class EditFontDimensions(EditingTool):
         self.remove_all_guides()
         self.remove_checkboxes()
         removeObserver(self, "fontWillClose")
-        removeObserver(self, "fontWillOpen")
+        removeObserver(self, "fontDidClose")
+        removeObserver(self, "fontDidOpen")
+        removeObserver(self, "glyphWindowDidOpen")
         # Restore user’s preference for whether guidelines are locked.
         setDefault("glyphViewLockGuides", self.user_lock)
 

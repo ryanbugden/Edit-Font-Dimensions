@@ -26,7 +26,11 @@ class EditFontDimensions(EditingTool):
         self.f = CurrentFont()
         self.last_snap_driving = "descender"
 
-        # Pre-clean guides
+        # Adding the UPM lock checkbox
+        self.snap_to_upm = getExtensionDefault(EXTENSION_KEY, False)
+        self.add_checkboxes()
+
+        # Pre-cleaning guides
         identifiers = getExtensionDefault(EXTENSION_KEY + ".identifiers", [])
         for f in AllFonts():
             for guideline in f.guidelines:
@@ -35,10 +39,6 @@ class EditFontDimensions(EditingTool):
                     identifiers.remove(guideline.identifier)
         setExtensionDefault(EXTENSION_KEY + ".identifiers", identifiers)
     
-        # Adding the UPM lock checkbox
-        self.snap_to_upm = getExtensionDefault(EXTENSION_KEY, False)
-        self.add_checkboxes()
-        
         # Setting up heights and guides
         self.update_dimension_info()
         self.set_up_guides()
@@ -126,7 +126,9 @@ class EditFontDimensions(EditingTool):
         self.remove_all_guides()
         self.remove_checkboxes()
         removeObserver(self, "fontWillClose")
-        removeObserver(self, "fontWillOpen")
+        removeObserver(self, "fontDidClose")
+        removeObserver(self, "fontDidOpen")
+        removeObserver(self, "glyphWindowDidOpen")
         # Restore user’s preference for whether guidelines are locked.
         setDefault("glyphViewLockGuides", self.user_lock)
 

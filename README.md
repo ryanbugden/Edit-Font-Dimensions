@@ -22,6 +22,7 @@ Edit Font Dimensions is a RoboFont extension that allows you to change your Font
 ### Versions
 
 ```
+2.0   2024.04.30  Smoother sailing, no more lingering UI.
 2.0   2023.10.06  Bugfix for when multiple dimensions the share same value. Rewrite + performance. Works on multiple open fonts.
 1.2.3 2023.05.31  Slightly better performance, code clean-up.
 1.2.2 2020.04.03  Fix bug that left guidelines there if the font was closed while the extension was active. Issue #3

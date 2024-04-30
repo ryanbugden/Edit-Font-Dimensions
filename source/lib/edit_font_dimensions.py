@@ -8,7 +8,10 @@ from os import path
 
 dirname = path.dirname(__file__)
 TOOLBAR_ICON = NSImage.alloc().initByReferencingFile_(path.join(dirname, "../resources/toolbar_icon.pdf"))
-
+SPECIAL_GUIDE_COLORS = (
+            (0.01,0.012,0.013, 1),
+            (0.99,0.998,0.9998,1),
+        )
 EXTENSION_KEY = 'com.ryanbugden.editFontDimensions'
 
 DEBUG = False
@@ -51,6 +54,7 @@ class EditFontDimensions(EditingTool):
         addObserver(self, "font_did_close", "fontDidClose")
         addObserver(self, "font_did_open", "fontDidOpen")
         addObserver(self, "glyph_window_did_open", "glyphWindowDidOpen")
+        addObserver(self, "did_undo", "didUndo")
     
 
     def checkbox_callback(self, sender):
@@ -73,9 +77,9 @@ class EditFontDimensions(EditingTool):
 
 
     def set_up_guides(self):
-        guide_color = (0,0,0,1)
+        guide_color = SPECIAL_GUIDE_COLORS[0]
         if inDarkMode():
-            guide_color = (1,1,1,1)    
+            guide_color = SPECIAL_GUIDE_COLORS[1]
         self.remove_all_guides()
         self.all_fonts_guides = {}
         identifiers = getExtensionDefault(EXTENSION_KEY + ".identifiers", [])
@@ -97,6 +101,8 @@ class EditFontDimensions(EditingTool):
         setattr(self.f.info, self.driving_attr, self.driving_guideline.y)
 
         if self.snap_to_upm:
+            if not self.f in self.all_fonts_guide.keys():
+                return
             # Change the ascender if the descender was the last to drive, and you’re locking to UPM
             if self.last_snap_driving == "descender":
                 guideline = self.all_fonts_guides[self.f]["ascender"]
@@ -113,6 +119,7 @@ class EditFontDimensions(EditingTool):
 
 
     def remove_all_guides(self):
+        # Note: do we need this anymore?
         for f, font_guides in self.all_fonts_guides.items():
             for guideline in font_guides.values():
                 if f:
@@ -120,6 +127,10 @@ class EditFontDimensions(EditingTool):
                         f.removeGuideline(guideline)
                     except:
                         continue
+        for f in AllFonts():
+            for guideline in f.guidelines:
+                if guideline.color in SPECIAL_GUIDE_COLORS:
+                    f.removeGuideline(guideline)
 
 
     def becomeInactive(self):
@@ -177,7 +188,7 @@ class EditFontDimensions(EditingTool):
         self.set_up_guides()
         self.remove_checkboxes()
         self.add_checkboxes()
-        
+
 
     def mouseDown(self, point, clickCount):
         self.update_dimension_info()
@@ -194,6 +205,10 @@ class EditFontDimensions(EditingTool):
                 
 
     def mouseUp(self, point):
+        self.set_metrics()
+
+
+    def did_undo(self, notification):
         self.set_metrics()
                 
 

@@ -23,6 +23,7 @@ class EditFontDimensions(EditingTool):
     def setup(self):
         self.f = CurrentFont()
         self.all_fonts_guides = {}
+        self.driving_guideline = None
 
 
     def becomeActive(self):
@@ -101,7 +102,7 @@ class EditFontDimensions(EditingTool):
         setattr(self.f.info, self.driving_attr, self.driving_guideline.y)
 
         if self.snap_to_upm:
-            if not self.f in self.all_fonts_guide.keys():
+            if not self.f in self.all_fonts_guides.keys():
                 return
             # Change the ascender if the descender was the last to drive, and you’re locking to UPM
             if self.last_snap_driving == "descender":

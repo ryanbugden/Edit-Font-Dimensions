@@ -1,7 +1,7 @@
-from mojo.events import EditingTool, installTool, addObserver, removeObserver
-from mojo.UI import getDefault, setDefault, AllGlyphWindows, inDarkMode
-from mojo.extensions import ExtensionBundle, setExtensionDefault, getExtensionDefault
 from vanilla import CheckBox
+from mojo.UI import getDefault, setDefault, AllGlyphWindows, inDarkMode
+from mojo.events import EditingTool, installTool, addObserver, removeObserver
+from mojo.extensions import ExtensionBundle, setExtensionDefault, getExtensionDefault
 
 
 
@@ -19,12 +19,10 @@ class EditFontDimensions(EditingTool):
     
     debug = False
 
-    def setup(self):
-        self.f = CurrentFont()
+    def becomeActive(self):
         self.all_fonts_guides = {}
         self.driving_guideline = None
 
-    def becomeActive(self):
         self.f = CurrentFont()
         self.last_snap_driving = "descender"
 
@@ -54,8 +52,8 @@ class EditFontDimensions(EditingTool):
         addObserver(self, "font_will_close", "fontWillClose")
         addObserver(self, "font_did_close", "fontDidClose")
         addObserver(self, "font_did_open", "fontDidOpen")
-        addObserver(self, "font_resign_current", "fontResignCurrent")
         addObserver(self, "font_became_current", "fontBecameCurrent")
+        addObserver(self, "app_did_become_active", "applicationDidBecomeActive")
         addObserver(self, "glyph_window_did_open", "glyphWindowDidOpen")
         addObserver(self, "did_undo", "didUndo")
         
@@ -65,8 +63,8 @@ class EditFontDimensions(EditingTool):
         removeObserver(self, "fontWillClose")
         removeObserver(self, "fontDidClose")
         removeObserver(self, "fontDidOpen")
-        removeObserver(self, "fontResignCurrent")
         removeObserver(self, "fontBecameCurrent")
+        removeObserver(self, "applicationDidBecomeActive")
         removeObserver(self, "glyphWindowDidOpen")
         removeObserver(self, "didUndo")
         # Restore user’s preference for whether guidelines are locked.
@@ -110,7 +108,8 @@ class EditFontDimensions(EditingTool):
             return
 
         # Change the height of whatever you're moving.
-        setattr(self.f.info, self.driving_attr, self.driving_guideline.y)
+        setattr(self.f.info, self.driving_attr, int(self.driving_guideline.y))
+        self.driving_guideline.y = int(self.driving_guideline.y)
 
         if self.snap_to_upm:
             if not self.f in self.all_fonts_guides.keys():
@@ -119,14 +118,14 @@ class EditFontDimensions(EditingTool):
             if self.last_snap_driving == "descender":
                 guideline = self.all_fonts_guides[self.f]["ascender"]
                 asc_from_desc = self.f.info.descender + self.f.info.unitsPerEm
-                guideline.y = asc_from_desc
+                guideline.y = int(asc_from_desc)
                 self.f.info.ascender = asc_from_desc
 
             # Change the descender if the ascender was the last to drive, and you’re locking to UPM
             elif self.last_snap_driving == "ascender":
                 guideline = self.all_fonts_guides[self.f]["descender"]
                 desc_from_asc = self.f.info.ascender - self.f.info.unitsPerEm
-                guideline.y = desc_from_asc
+                guideline.y = int(desc_from_asc)
                 self.f.info.descender = desc_from_asc
 
     def remove_all_guides(self):
@@ -177,13 +176,13 @@ class EditFontDimensions(EditingTool):
         self.remove_all_guides()
         self.set_up_guides()
 
-    def font_resign_current(self, notification):
-        self.remove_all_guides()
-        self.set_up_guides()
-
     def font_became_current(self, notification):
         self.remove_all_guides()
         self.set_up_guides()
+
+    def app_did_become_active(self, notification):
+        self.remove_all_guides()
+        self.set_up_guides() 
 
     def glyph_window_did_open(self, window):
         self.remove_all_guides()

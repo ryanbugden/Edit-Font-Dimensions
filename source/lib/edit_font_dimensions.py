@@ -49,6 +49,8 @@ class EditFontDimensions(EditingTool):
         
         # Saving whether user has guides locked previously
         self.user_lock = getDefault("glyphViewLockGuides")
+        if self.user_lock is None:
+            self.user_lock = False    
         setDefault("glyphViewLockGuides", False)
         
         addObserver(self, "font_will_close", "fontWillClose")
@@ -56,6 +58,17 @@ class EditFontDimensions(EditingTool):
         addObserver(self, "font_did_open", "fontDidOpen")
         addObserver(self, "glyph_window_did_open", "glyphWindowDidOpen")
         addObserver(self, "did_undo", "didUndo")
+        
+        
+    def becomeInactive(self):
+        self.remove_all_guides()
+        self.remove_checkboxes()
+        removeObserver(self, "fontWillClose")
+        removeObserver(self, "fontDidClose")
+        removeObserver(self, "fontDidOpen")
+        removeObserver(self, "glyphWindowDidOpen")
+        # Restore user’s preference for whether guidelines are locked.
+        setDefault("glyphViewLockGuides", self.user_lock)
     
 
     def checkbox_callback(self, sender):
@@ -134,17 +147,6 @@ class EditFontDimensions(EditingTool):
                     f.removeGuideline(guideline)
 
 
-    def becomeInactive(self):
-        self.remove_all_guides()
-        self.remove_checkboxes()
-        removeObserver(self, "fontWillClose")
-        removeObserver(self, "fontDidClose")
-        removeObserver(self, "fontDidOpen")
-        removeObserver(self, "glyphWindowDidOpen")
-        # Restore user’s preference for whether guidelines are locked.
-        setDefault("glyphViewLockGuides", self.user_lock)
-
-
     def add_checkboxes(self):
         self.checkboxes = []
         for w in AllGlyphWindows():
@@ -195,6 +197,8 @@ class EditFontDimensions(EditingTool):
         self.update_dimension_info()
         # Find the closest dimension to the mouse pointer, and designate a driver (guideline)
         if DEBUG: print("mouse-down")
+        if self.f not in self.all_fonts_guides.keys():
+            return
         self.driving_attr, self.driving_guideline = min(self.all_fonts_guides[self.f].items(), key=lambda x: abs(point.y - x[1].y))
         if self.driving_attr in ["ascender", "descender"]:
             self.last_snap_driving = self.driving_attr

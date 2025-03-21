@@ -1,0 +1,10 @@
+name: Edit Font Dimensions
+developer: Ryan Bugden
+developerURL: http://ryanbugden.com
+launchAtStartUp: true
+mainScript: main.py
+version: 2.2.1
+html: false
+timeStamp: 1740786633
+requiresVersionMajor: '4'
+requiresVersionMinor: '4b'
